@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>hello-wasm example</title>
+  </head>
+  <body>
+    <script type="module">
+      import init, { query_wasm } from "./pkg/wasm.js";
+      init().then(() => {
+        let full = `
+{
+    "data": [
+        {
+            "content": {
+                "labels": [
+                    {
+                        "text": "tempor labore",
+                        "type": 2
+                    }
+                ],
+                "level": 3
+            },
+            "id": 183,
+            "name": "Celia"
+        },
+        {
+            "content": {
+                "labels": [
+                    {
+                        "text": "proident tempor",
+                        "type": 1
+                    },
+                    {
+                        "text": "nisi commodo",
+                        "type": 2
+                    }
+                ],
+                "level": 1
+            },
+            "id": 148,
+            "name": "Winters"
+        },
+        {
+            "content": {
+                "labels": [
+                    {
+                        "text": "nostrud proident",
+                        "type": 2
+                    },
+                    {
+                        "text": "ipsum ea",
+                        "type": 1
+                    }
+                ],
+                "level": 1
+            },
+            "id": 134,
+            "name": "Brenda"
+        },
+        {
+            "content": {
+                "labels": [],
+                "level": 3
+            },
+            "id": 144,
+            "name": "Cathy"
+        }
+    ]
+}
+        `;
+        let select = `
+
+{
+    "data": {
+        "id": true,
+        "name": true,
+        "content": {
+            "labels": true
+        }
+    }
+}
+        `;
+        let ret = query_wasm(full, select);
+        console.log(ret);
+      });
+    </script>
+  </body>
+</html>
