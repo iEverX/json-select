@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
+import { useState, useEffect } from 'react';
 import './App.css';
 import init, {query_wasm} from 'wasm';
 import JsonEditor from './JsonEditor'
