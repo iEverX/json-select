@@ -4,8 +4,5 @@ use query::query_str;
 
 #[wasm_bindgen]
 pub fn query_wasm(full: &str, select: &str) -> String {
-    match query_str(full, select) {
-        Ok(res) => res,
-        Err(_) => String::from("error"),
-    }
+    query_str(full, select).unwrap_or_else(|_| String::from("error"))
 }

@@ -1,3 +1,4 @@
+use std::thread::sleep;
 use anyhow;
 use serde_json::{Value, Map};
 
@@ -9,7 +10,10 @@ pub fn query_str(full: &str, select: &str) -> anyhow::Result<String> {
 }
 
 pub fn do_query(full: &Value, select: &Value) -> Value {
-    if select.is_boolean() && select.as_bool().unwrap() {
+    let full_clone = select.is_boolean() && select.as_bool().unwrap()
+        || select.is_i64() && select.as_i64().unwrap() > 0;
+
+    if full_clone {
         full.clone()
     } else if full.is_array() {
         let mut arr = Vec::<Value>::new();
@@ -28,5 +32,59 @@ pub fn do_query(full: &Value, select: &Value) -> Value {
             }
         }
         Value::Object(m)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+    #[test]
+    fn query_str_simple() {
+        let full = r#"
+        {
+            "cities": [
+                {
+                    "name": "AA",
+                    "code": 1
+                },
+                {
+                    "name": "BB",
+                    "code": 2
+                }
+            ],
+            "data": "content",
+            "value": 1901
+        }"#;
+
+        let query = r#"
+        {
+            "cities": {
+                "name": true
+            },
+            "value": 1
+        }"#;
+
+        let result = query_str(full, query);
+        if result.is_err() {
+           eprintln!("{:?}", result.err()) ;
+            return;
+        }
+        assert!(result.is_ok());
+
+    let expected = r#"{
+  "cities": [
+    {
+      "name": "AA"
+    },
+    {
+      "name": "BB"
+    }
+  ],
+  "value": 1901
+}"#;
+
+        assert_eq!(result.unwrap(), expected);
+
     }
 }
